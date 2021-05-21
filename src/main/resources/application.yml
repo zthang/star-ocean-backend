@@ -1,0 +1,64 @@
+server:
+  port: 8787
+
+spring:
+  datasource:
+    name: myProject
+    type: com.alibaba.druid.pool.DruidDataSource
+    #druid相关配置
+    druid:
+      #监控统计拦截的filters
+      filters: stat
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://47.103.217.165:3306/bigProject?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      username: root
+      password: 123456
+      #配置初始化大小/最小/最大
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      #获取连接等待超时时间
+      max-wait: 60000
+      #间隔多久进行一次检测，检测需要关闭的空闲连接
+      time-between-eviction-runs-millis: 60000
+      #一个连接在池中最小生存的时间
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+
+## 该配置节点为独立的节点，不能放在spring的节点下，会导致配置无法被识别
+mybatis:
+  mapper-locations: classpath:mapper/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.tju.myproject.entity  # 注意：对应实体类的路径
+
+#pagehelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+  returnPageInfo: check
+
+# 异步线程配置
+# 配置核心线程数
+async.executor.thread:
+  core_pool_size : 5
+  # 配置最大线程数
+  max_pool_size : 5
+  # 配置队列大小
+  queue_capacity : 99999
+  # 配置线程池中的线程的名称前缀
+  name.prefix : async-service-
+
+#jwt配置
+# 加密yan
+jwt.secret : A0B1C2D3E4F5G6H7I8J9KALBMCNDOEPFQ0R1S2T3U4V5W6X7Y8Z9
+# tocken 过期时间，单位秒
+jwt.expire : 3000
+# 需要认证的url，多个URL使用英文逗号,分割
+jwt.authorised-urls : /getUserInfo
