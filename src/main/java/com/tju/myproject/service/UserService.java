@@ -5,6 +5,6 @@ import com.tju.myproject.entity.User;
 public interface UserService
 {
     int addUser(User user);
-    User getUserByUsername(String username);
+    User getUserByPhone(String phone);
     User getUserByUserID(Integer userID);
 }

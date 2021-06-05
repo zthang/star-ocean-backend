@@ -55,7 +55,7 @@ public class JwtFilter implements Filter {
                 Map<String, Object> token = jwtHelper.validateTokenAndGetClaims(httpRequest);
                 HttpSession session = httpRequest.getSession();
                 if (token != null && !token.containsKey("error")) {
-                    session.setAttribute("loginName", token.get("loginName"));          //将用户名放在session中
+                    session.setAttribute("openid", token.get("openid"));          //将用户名放在session中
                     chain.doFilter(request, response);
                     return;
                 }else if(token == null){

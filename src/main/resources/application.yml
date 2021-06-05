@@ -10,7 +10,7 @@ spring:
       #监控统计拦截的filters
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://47.103.217.165:3306/bigProject?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      url: jdbc:mysql://localhost:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
       #配置初始化大小/最小/最大
@@ -59,6 +59,15 @@ async.executor.thread:
 # 加密yan
 jwt.secret : A0B1C2D3E4F5G6H7I8J9KALBMCNDOEPFQ0R1S2T3U4V5W6X7Y8Z9
 # tocken 过期时间，单位秒
-jwt.expire : 3000
+jwt.expire : 360000
 # 需要认证的url，多个URL使用英文逗号,分割
-jwt.authorised-urls : /getUserInfo
+jwt.authorised-urls : /apii/*
+# header 名称
+jwt.header: token
+
+wx.appId: wxc7d981fc555abd89
+wx.appSecret : a805c030266d57cbe7a04ba3ce12b0f4
+
+file-save-path : /Users/zhangtianhang/WeChatProjects/tempImg/
+
+default-img : /Users/zhangtianhang/WeChatProjects/default.jpg

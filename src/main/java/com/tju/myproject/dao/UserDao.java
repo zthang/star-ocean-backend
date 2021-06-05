@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface UserDao
 {
     int addUser(@Param("user") User user);
-    User getUserByUsername(@Param("username")String username);
+    User getUserByPhone(@Param("phone")String phone);
     User getUserByUserID(@Param("userID")Integer userID);
 }

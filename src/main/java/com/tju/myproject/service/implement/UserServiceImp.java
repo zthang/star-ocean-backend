@@ -19,9 +19,9 @@ public class UserServiceImp implements UserService
     }
 
     @Override
-    public User getUserByUsername(String username)
+    public User getUserByPhone(String phone)
     {
-        return userDao.getUserByUsername(username);
+        return userDao.getUserByPhone(phone);
     }
 
     @Override
