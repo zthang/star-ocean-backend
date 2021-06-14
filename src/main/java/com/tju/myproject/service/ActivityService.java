@@ -9,6 +9,8 @@ public interface ActivityService {
     ResultEntity getGood();
     ResultEntity getUniversity();
     ResultEntity addAcivity(Map data);
+    ResultEntity updateAcivity(Map data);
     ResultEntity getActivities(Integer index,Integer size);
     ResultEntity activityEnrol(Map data);
+    ResultEntity getActivityUsersInfo(Integer activityID);
 }

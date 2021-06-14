@@ -9,4 +9,5 @@ public interface LoginService {
     ResultEntity weChatLogin(Map data);
     ResultEntity getToken(Map data);
     String getPhoneNumber(Map data);
+    ResultEntity messagePush(Map data);
 }

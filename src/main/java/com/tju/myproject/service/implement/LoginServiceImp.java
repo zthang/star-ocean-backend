@@ -12,10 +12,16 @@ import com.tju.myproject.utils.HttpRequest;
 import com.tju.myproject.utils.JwtHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.tju.myproject.utils.HttpRequest.generatePostJson;
 
 @Service(value = "loginService")
 public class LoginServiceImp implements LoginService
@@ -27,6 +33,8 @@ public class LoginServiceImp implements LoginService
     private LoginDao loginDao;
     @Autowired
     private JwtHelper jwtHelper;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Value("${wx.appId}")
     public void setAppId(String appIdNew) {
@@ -38,6 +46,63 @@ public class LoginServiceImp implements LoginService
     @Value("${wx.appSecret}")
     public void setAppSecret(String appSecretNew) {
         appSecret = appSecretNew;
+    }
+
+    @Override
+    public ResultEntity messagePush(Map data)
+    {
+        Map result=new HashMap();
+        try {
+
+            String urlFormat = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
+            String url = String.format(urlFormat, appId, appSecret);
+            String json = HttpRequest.sendGet(url);
+
+            //将json字符串转化成对象
+            result = JSON.parseObject(json);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        Integer state=200;
+        String errmsg="access_token获取失败";
+        if(result.containsKey("errcode")||result.get("access_token")==null)
+            state=-1;
+        else {
+            try {
+                for(String openid:(ArrayList<String>)data.get("openid"))
+                {
+                    String urlFormat2 = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s";
+                    String url2 = String.format(urlFormat2, result.get("access_token"));
+
+                    String t=JSON.toJSONString(data.get("message"));
+                    Map<String, Object> jsonMap = new HashMap<>();
+                    jsonMap.put("touser", openid);
+                    jsonMap.put("template_id", data.get("template_id").toString());
+                    jsonMap.put("page", data.get("page").toString());
+                    jsonMap.put("miniprogram_state", data.get("miniprogram_state").toString());
+                    jsonMap.put("lang", "zh_CN");
+                    jsonMap.put("data", (data.get("message")));
+
+                    ResponseEntity apiResponse = restTemplate.postForEntity
+                            (
+                                    url2,
+                                    generatePostJson(jsonMap),
+                                    String.class
+                            );
+                    JSONObject o=JSON.parseObject(apiResponse.getBody().toString());
+                    if((Integer) o.get("errcode")!=0)
+                    {
+                        state=-1;
+                        errmsg=o.get("errmsg").toString();
+                    }
+                }
+            }
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+        return new ResultEntity(state,errmsg,null);
     }
 
     @Override
@@ -80,14 +145,13 @@ public class LoginServiceImp implements LoginService
     }
     public ResultEntity getToken(Map userData)
     {
-        String phoneNumber=(String) userData.get("phone");
-        User u=userDao.getUserByPhone(phoneNumber);
+        Map u=userDao.getUserByInfo(userData);
         ResultEntity resultEntity;
         if(u!=null)
         {
             JSONObject data = jwtHelper.generateToken(userData);
-            data.put("userID",u.getId());
-            data.put("role",u.getRole());
+            data.put("userID",u.get("id"));
+            data.put("role",u.get("role"));
             resultEntity=new ResultEntity(200,"",data);
         }
         else

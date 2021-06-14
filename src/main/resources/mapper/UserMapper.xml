@@ -15,6 +15,8 @@
         <result column="role" property="role"/>
         <result column="join_date" property="join_date"/>
         <result column="point" property="point"/>
+        <result column="isAuth" property="isAuth"/>
+        <result column="club" property="club"/>
     </resultMap>
     <insert id="addUser"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user
@@ -27,7 +29,9 @@
             id_card=#{user.id_card},
             role=0,
             join_date=#{user.join_date},
-            point=0
+            point=0,
+            isAuth=-1,
+            club=#{user.club}
     </insert>
     <select id="getUserByPhone" resultMap="userInfoMap">
         SELECT *

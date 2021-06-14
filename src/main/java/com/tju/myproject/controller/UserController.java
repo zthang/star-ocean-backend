@@ -45,9 +45,28 @@ public class UserController
         //String phoneNumber=loginService.getPhoneNumber(data);
         return loginService.getToken(data);
     }
-    @GetMapping("/getDelta")
-    public String getDelta()
+    @PostMapping("api/addUserAuth")
+    public ResultEntity addUserAuth(@RequestBody Map data)
     {
-        return "{\"ops\":[{\"attributes\":{\"bold\":\"strong\"},\"insert\":\"asdasd\"},{\"insert\":\"\\n\"},{\"attributes\":{\"italic\":\"em\"},\"insert\":\"阿斯顿\"},{\"insert\":\"\\n\"},{\"attributes\":{\"alt\":\"img\",\"height\":\"80%\",\"width\":\"120\",\"data-custom\":\"id=0\"},\"insert\":{\"image\":\"http://tmp/t4MBRsOO22bE0d783e2795b4aef0cd60bed69ea54d0b.png\"}},{\"insert\":\"\\n\"},{\"attributes\":{\"alt\":\"img\",\"height\":\"80%\",\"width\":\"80%\",\"data-custom\":\"id=1\"},\"insert\":{\"image\":\"http://tmp/KShguYYcpZ8k41b46ea86b4a62c07315e162ed1caf23.jpg\"}},{\"insert\":\"\\n\\n\\n\"}]}";
+        return userService.addUserAuth(data);
+    }
+    @PostMapping("api/passAuth")
+    public ResultEntity updateUserAuth(@RequestBody Map data)
+    {
+        return userService.passAuth(data);
+    }
+    @PostMapping("api/notPassAuth")
+    public ResultEntity notPassAuth(@RequestBody Map data)
+    {
+        return userService.notPassAuth(data);
+    }
+    @PostMapping("api/sendMessage")
+    public ResultEntity sendMessage(@RequestBody Map data){
+        return loginService.messagePush(data);
+    }
+    @GetMapping("api/getUserAuthInfo")
+    public ResultEntity getUserAuthInfo(Integer index,Integer size)
+    {
+        return userService.getUserAuthInfo(index, size);
     }
 }

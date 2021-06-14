@@ -1,5 +1,9 @@
 package com.tju.myproject.utils;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,5 +58,18 @@ public class HttpRequest {
             in.close();
         }
         return result;
+    }
+    public static HttpEntity<Map<String, Object>> generatePostJson(Map<String, Object> jsonMap) {
+
+        //如果需要其它的请求头信息、都可以在这里追加
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
+
+        httpHeaders.setContentType(type);
+
+        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<Map<String, Object>>(jsonMap, httpHeaders);
+
+        return httpEntity;
     }
 }

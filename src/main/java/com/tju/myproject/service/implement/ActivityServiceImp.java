@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,8 @@ public class ActivityServiceImp implements ActivityService {
             builder.append(i);
             builder.append(c);
         }
-        builder.deleteCharAt(builder.length()-1);
+        if(builder.length()>1)
+            builder.deleteCharAt(builder.length()-1);
         builder.append(']');
         return builder.toString();
     }
@@ -69,6 +68,22 @@ public class ActivityServiceImp implements ActivityService {
         Integer success = activityDao.addActivity(data);
         return new ResultEntity(success==1?200:-1,success==1?"发布活动成功！":"发布活动失败！",null);
     }
+
+    @Override
+    public ResultEntity updateAcivity(Map data)
+    {
+        data.put("selectedLocation",getFormatStr((ArrayList<Object>) data.get("selectedLocation"),','));
+        data.put("selectedGood",getFormatStr((ArrayList<Object>) data.get("selectedGood"),','));
+        data.put("selectedUniversity",getFormatStr((ArrayList<Object>) data.get("selectedUniversity"),','));
+        data.put("scheme",getFormatStr((ArrayList<Object>) data.get("scheme"),'@'));
+        if(data.get("activityPrice")==null||data.get("activityPrice")=="")
+            data.put("activityPrice",0);
+        if(data.get("showImg")==null)
+            data.put("showImg",defaultUrl);
+        Integer success = activityDao.updateActivity(data);
+        return new ResultEntity(success==1?200:-1,success==1?"修改活动成功！":"修改活动失败！",null);
+    }
+
     public ArrayList<Map> handleJson(String str, String c, Integer mode)
     {
         String s=str.substring(1,str.length()-1);
@@ -83,7 +98,8 @@ public class ActivityServiceImp implements ActivityService {
             source=activityDao.getUniversity();
         for(String t:strArr)
         {
-            source.stream().filter(item->item.get("id").equals(Integer.parseInt(t))).findFirst().ifPresent(res::add);
+            if(t.length()>0)
+                source.stream().filter(item->item.get("id").equals(Integer.parseInt(t))).findFirst().ifPresent(res::add);
         }
         return res;
     }
@@ -125,5 +141,33 @@ public class ActivityServiceImp implements ActivityService {
             }
         }
         return new ResultEntity(res1==1&&res2==0?200:-1,"",null);
+    }
+    @Override
+    public ResultEntity getActivityUsersInfo(Integer activityID)
+    {
+        ArrayList<Map>enrolInfo=activityDao.getActivityUsersInfo(activityID);
+        Map resMap=new HashMap();
+        Map<Integer,ArrayList<Map>>locationMap=new HashMap<>();
+        Map<Integer,ArrayList<Map>> goodsMap=new HashMap();
+        Map<String,ArrayList<Map>>schemeMap=new HashMap();
+        resMap.put("allInfo", enrolInfo);
+        for(Map m:enrolInfo)
+        {
+            m.put("scheme",JSON.parse((String)m.get("scheme")));
+            locationMap.compute((Integer) ((HashMap)m.get("location")).get("id"),(k,v)->v==null?new ArrayList<>():v).add(m);
+            for(Map good:(ArrayList<Map>)m.get("goods"))
+            {
+                Map mTemp=new HashMap();
+                mTemp.putAll(m);
+                mTemp.put("num",good.get("num"));
+                goodsMap.compute((Integer) good.get("good"),(k,v)->v==null?new ArrayList<>():v).add(mTemp);
+            }
+            schemeMap.compute((String)((Map)m.get("scheme")).get("text"),(k,v)->v==null?new ArrayList<>():v).add(m);
+        }
+        resMap.put("locationInfo",locationMap);
+        resMap.put("goodInfo",goodsMap);
+        resMap.put("schemeInfo",schemeMap);
+
+        return new ResultEntity(200,"",resMap);
     }
 }

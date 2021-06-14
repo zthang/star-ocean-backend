@@ -17,4 +17,6 @@ public class User
     private Integer role;
     private String join_date;
     private Integer point;
+    private Integer isAuth;
+    private String club;
 }

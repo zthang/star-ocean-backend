@@ -24,7 +24,7 @@ public class ActivityController {
     {
         return activityService.getGood();
     }
-    @GetMapping("/api/getUniversity")
+    @GetMapping("/getUniversity")
     public ResultEntity getUniversity()
     {
         return activityService.getUniversity();
@@ -33,6 +33,11 @@ public class ActivityController {
     public ResultEntity addActivity(@RequestBody Map data)
     {
         return activityService.addAcivity(data);
+    }
+    @PostMapping("/api/updateActivity")
+    public ResultEntity updateActivity(@RequestBody Map data)
+    {
+        return activityService.updateAcivity(data);
     }
     @GetMapping("/api/getActivity")
     public ResultEntity addActivity(Integer index,Integer size)
@@ -43,5 +48,10 @@ public class ActivityController {
     public ResultEntity activityEnrol(@RequestBody Map data)
     {
         return activityService.activityEnrol(data);
+    }
+    @GetMapping("/api/getActivityUsersInfo")
+    public ResultEntity getActivityUsersInfo(Integer activityID)
+    {
+        return activityService.getActivityUsersInfo(activityID);
     }
 }

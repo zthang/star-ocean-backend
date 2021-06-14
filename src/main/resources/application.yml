@@ -1,5 +1,12 @@
 server:
   port: 8787
+  ssl: # ssl相关配置
+    enabled: true
+    key-store: classpath:xzxjlljh.xyz.jks
+    key-store-password: hj1ygs6qrh9f
+    key-store-type: JKS
+
+http-port: 8080 # http重定向https配置
 
 spring:
   datasource:
@@ -10,8 +17,10 @@ spring:
       #监控统计拦截的filters
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-      username: root
+      url: jdbc:mysql://xzxjlljh.xyz:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+#      url: jdbc:mysql://localhost:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      username: zthang
+#      username: root
       password: 123456
       #配置初始化大小/最小/最大
       initial-size: 1
@@ -59,15 +68,28 @@ async.executor.thread:
 # 加密yan
 jwt.secret : A0B1C2D3E4F5G6H7I8J9KALBMCNDOEPFQ0R1S2T3U4V5W6X7Y8Z9
 # tocken 过期时间，单位秒
-jwt.expire : 360000
+jwt.expire : 7200
 # 需要认证的url，多个URL使用英文逗号,分割
-jwt.authorised-urls : /apii/*
+jwt.authorised-urls : /api/*
 # header 名称
 jwt.header: token
 
-wx.appId: wxc7d981fc555abd89
-wx.appSecret : a805c030266d57cbe7a04ba3ce12b0f4
+http_pool:
+  max_total: 200
+  default_max_per_route: 100
+  connect_timeout: 5000
+  connection_request_timeout: 1000
+  socket_timeout: 65000
+  validate_after_inactivity: 2000
 
-file-save-path : /Users/zhangtianhang/WeChatProjects/tempImg/
+wx.appId: wx1bdbda9945782439
+wx.appSecret : 4dd7895f9ac3b7bc45121e6313c6a17a
 
-default-img : /Users/zhangtianhang/WeChatProjects/default.jpg
+file-save-path : /home/ubuntu/wechatProject/tempImg/
+#file-save-path : /Users/zhangtianhang/WechatProjects/tempImg/
+
+default-img : https://xzxjlljh.xyz:8787/images/2021/06/13/3c45c4889fb24901a1a424c09838f56b.jpg
+
+#下面这两个配置，可以在每次连接的时候判断一些连接是否有效
+spring.datasource.druid.test-on-borrow : true
+spring.datasource.druid.test-while-idle : true
