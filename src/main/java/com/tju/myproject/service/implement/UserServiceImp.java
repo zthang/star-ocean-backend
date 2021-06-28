@@ -71,4 +71,72 @@ public class UserServiceImp implements UserService
         loginService.messagePush(m);
         return new ResultEntity(res1==1&&res2==1?200:-1,"",null);
     }
+
+    @Override
+    public ResultEntity getUsersByName(String name)
+    {
+        return new ResultEntity(200,"",userDao.getUsersByName(name));
+    }
+
+    @Override
+    @Transactional
+    public ResultEntity addUserInfo(Map data)
+    {
+        Map u=userDao.getUserByInfo(data);
+        if(u==null)
+        {
+            Integer res=-1;
+            res+=userDao.addUserInfo(data);
+            for(Map club:(ArrayList<Map>)data.get("club"))
+            {
+                res-=1;
+                club.put("userID",Integer.parseInt(data.get("id").toString()));
+                res+=userDao.addUserClub(club);
+            }
+            return new ResultEntity(res==0?200:-1,res==0?"":"添加用户失败!",null);
+        }
+        else
+        {
+            return new ResultEntity(-1,"用户已存在!",null);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResultEntity updateUserInfo(Map data)
+    {
+        ArrayList<Map>items=(ArrayList<Map>) data.get("items");
+        Integer res=0;
+        for(Map item:items)
+        {
+            if(!item.containsKey("state"))
+                continue;
+            else {
+                res-=1;
+                Map u=userDao.getUserByInfo(item);
+                if(u==null||u.get("id").toString().equals(item.get("id").toString()))
+                {
+                    res+=userDao.updateUserInfo(item);
+                    ArrayList<Map>clubs=(ArrayList<Map>)item.get("club");
+                    for(Map club:clubs)
+                    {
+                        if(!club.containsKey("state"))
+                            continue;
+                        else {
+                            res-=1;
+                            Integer state=Integer.parseInt(club.get("state").toString());
+                            if(state==1)
+                                res+=userDao.addUserClub(club);
+                            else if(state==3)
+                                res+=userDao.deleteUserClub(Integer.parseInt(club.get("id").toString()));
+                        }
+                    }
+                }
+                else {
+                    return new ResultEntity(-1,"更新失败,用户已存在!",null);
+                }
+            }
+        }
+        return new ResultEntity(res==0?200:-1,res==0?"":"更新用户信息失败!",null);
+    }
 }

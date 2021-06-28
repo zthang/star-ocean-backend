@@ -29,6 +29,11 @@ public class ActivityController {
     {
         return activityService.getUniversity();
     }
+    @GetMapping("/api/getClub")
+    public ResultEntity getClub()
+    {
+        return activityService.getClub();
+    }
     @PostMapping("/api/addActivity")
     public ResultEntity addActivity(@RequestBody Map data)
     {
@@ -40,18 +45,38 @@ public class ActivityController {
         return activityService.updateAcivity(data);
     }
     @GetMapping("/api/getActivity")
-    public ResultEntity addActivity(Integer index,Integer size)
+    public ResultEntity getActivity(Integer index,Integer size)
     {
         return activityService.getActivities(index,size);
+    }
+    @PostMapping("/api/getActivityByUser")
+    public ResultEntity getActivityByUser(@RequestBody Map data)
+    {
+        return activityService.getActivitiesByUser(data);
     }
     @PostMapping("api/activityEnrol")
     public ResultEntity activityEnrol(@RequestBody Map data)
     {
         return activityService.activityEnrol(data);
     }
+    @PostMapping("api/updateEnrol")
+    public ResultEntity updateActivityEnrol(@RequestBody Map data)
+    {
+        return activityService.updateActivityEnrol(data);
+    }
     @GetMapping("/api/getActivityUsersInfo")
     public ResultEntity getActivityUsersInfo(Integer activityID)
     {
         return activityService.getActivityUsersInfo(activityID);
+    }
+    @PostMapping("/api/updateLocation")
+    public ResultEntity updateLocation(@RequestBody Map data)
+    {
+        return activityService.updateLocation(data);
+    }
+    @PostMapping("/api/updateGood")
+    public ResultEntity updateGood(@RequestBody Map data)
+    {
+        return activityService.updateGood(data);
     }
 }

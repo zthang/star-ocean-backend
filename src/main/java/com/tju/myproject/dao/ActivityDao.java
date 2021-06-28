@@ -18,12 +18,28 @@ public interface ActivityDao
     ArrayList<Map> getGood();
     @Select("select * from university")
     ArrayList<Map> getUniversity();
-    @Insert("insert into activity (activityName, activityDate, activityDDL, activityLocation, activityPrice, selectedLocation, selectedGood, selectedUniversity, scheme, delta, showImg, plainText) VALUES (#{activityName},#{activityDate},#{activityDDL},#{activityLocation},#{activityPrice},#{selectedLocation},#{selectedGood},#{selectedUniversity},#{scheme},#{delta},#{showImg},#{plainText})")
+    @Select("select * from club")
+    ArrayList<Map> getClub();
+    @Update("update location set name=#{name} where id=#{id}")
+    Integer updateLocation(Map data);
+    @Delete("delete from location where id=#{id}")
+    Integer deleteLocation(@Param("id") Integer id);
+    @Insert("insert into location (name) VALUES (#{name})")
+    Integer addLocation(@Param("name") String name);
+    @Update("update good set name=#{name}, price=#{price} where id=#{id}")
+    Integer updateGood(Map data);
+    @Delete("delete from good where id=#{id}")
+    Integer deleteGood(@Param("id") Integer id);
+    @Insert("insert into good (name, price) VALUES (#{name}, #{price})")
+    Integer addGood(Map data);
+    @Insert("insert into activity (activityName, activityDate, activityDDL, activityLocation, activityPrice, selectedLocation, selectedGood, selectedClub, scheme, delta, showImg, plainText) VALUES (#{activityName},#{activityDate},#{activityDDL},#{activityLocation},#{activityPrice},#{selectedLocation},#{selectedGood},#{selectedClub},#{scheme},#{delta},#{showImg},#{plainText})")
     Integer addActivity(Map m);
-    @Update("update activity set activityName=#{activityName}, activityDate=#{activityDate}, activityDDL=#{activityDDL}, activityLocation=#{activityLocation}, activityPrice=#{activityPrice}, selectedLocation=#{selectedLocation}, selectedGood=#{selectedGood}, selectedUniversity=#{selectedUniversity}, scheme=#{scheme}, delta=#{delta}, showImg=#{showImg}, plainText=#{plainText} where id=#{activityID}")
+    @Update("update activity set activityName=#{activityName}, activityDate=#{activityDate}, activityDDL=#{activityDDL}, activityLocation=#{activityLocation}, activityPrice=#{activityPrice}, selectedLocation=#{selectedLocation}, selectedGood=#{selectedGood}, selectedClub=#{selectedClub}, scheme=#{scheme}, delta=#{delta}, showImg=#{showImg}, plainText=#{plainText} where id=#{activityID}")
     Integer updateActivity(Map m);
     @Select("select * from activity order by id desc limit #{index},#{size}")
     ArrayList<Map> getActivities(@Param("index")Integer index, @Param("size")Integer size);
+    @Select("select * from activity order by id desc")
+    ArrayList<Map> getAllActivities();
     @Select("select * from location where id=#{id}")
     Map getLocationById(@Param("id")Integer id);
     @Select("select * from good where id=#{id}")
@@ -32,8 +48,12 @@ public interface ActivityDao
     Map getUniversityById(@Param("id")Integer id);
     @Insert("insert into user_activity(activityID, userID, name, phone, urgentPhone, idCard, location, scheme, remark, shouldPay,openid) VALUES (#{activityID}, #{userID}, #{name}, #{phone}, #{urgentPhone}, #{idCard}, #{location}, #{scheme}, #{remark}, #{shouldPay},#{openid})")
     Integer activityEnrol(Map data);
+    @Update("update user_activity set userID=#{userID}, name=#{name}, phone=#{phone}, urgentPhone=#{urgentPhone},idCard=#{idCard},location=#{location}, scheme=#{scheme}, remark=#{remark}, shouldPay=#{shouldPay},openid=#{openid} where id=#{enrolID}")
+    Integer updateActivityEnrol(Map data);
     @Insert("insert into user_activity_good (activityID, userID, good, num) VALUES (#{activityID}, #{userID}, #{good}, #{num})")
     Integer addUserNeedGood(Map data);
+    @Delete("delete from user_activity_good where activityID=#{activityID} and userID=#{userID}")
+    Integer deleteUserNeedGood(Map data);
     @Select("select * from user_activity where activityID=#{activityID} and userID=#{userID}")
     Map getUserActivity(@Param("activityID")Integer activityID, @Param("userID")Integer userID);
 

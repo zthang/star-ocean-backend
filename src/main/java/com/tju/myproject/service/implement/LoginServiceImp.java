@@ -152,6 +152,7 @@ public class LoginServiceImp implements LoginService
             JSONObject data = jwtHelper.generateToken(userData);
             data.put("userID",u.get("id"));
             data.put("role",u.get("role"));
+            data.put("userInfo",u);
             resultEntity=new ResultEntity(200,"",data);
         }
         else

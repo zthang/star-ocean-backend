@@ -5,10 +5,18 @@ server:
     key-store: classpath:xzxjlljh.xyz.jks
     key-store-password: hj1ygs6qrh9f
     key-store-type: JKS
+  tomcat:
+    connection-timeout: 180000
 
 http-port: 8080 # http重定向https配置
 
 spring:
+  servlet:
+    multipart:
+      #单个文件最大大小
+      max-file-size: 10MB
+      #所有上传文件最大大小
+      max-request-size: 100MB
   datasource:
     name: myProject
     type: com.alibaba.druid.pool.DruidDataSource
@@ -17,10 +25,10 @@ spring:
       #监控统计拦截的filters
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://xzxjlljh.xyz:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 #      url: jdbc:mysql://localhost:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-      username: zthang
 #      username: root
+      url: jdbc:mysql://xzxjlljh.xyz:3306/star?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      username: zthang
       password: 123456
       #配置初始化大小/最小/最大
       initial-size: 1
@@ -34,7 +42,7 @@ spring:
       min-evictable-idle-time-millis: 300000
       validation-query: SELECT 'x'
       test-while-idle: true
-      test-on-borrow: false
+      test-on-borrow: true
       test-on-return: false
       #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
       pool-prepared-statements: false
@@ -89,7 +97,3 @@ file-save-path : /home/ubuntu/wechatProject/tempImg/
 #file-save-path : /Users/zhangtianhang/WechatProjects/tempImg/
 
 default-img : https://xzxjlljh.xyz:8787/images/2021/06/13/3c45c4889fb24901a1a424c09838f56b.jpg
-
-#下面这两个配置，可以在每次连接的时候判断一些连接是否有效
-spring.datasource.druid.test-on-borrow : true
-spring.datasource.druid.test-while-idle : true

@@ -14,4 +14,7 @@ public interface UserService
     ResultEntity getUserAuthInfo(Integer index, Integer size);
     ResultEntity passAuth(Map data);
     ResultEntity notPassAuth(Map data);
+    ResultEntity getUsersByName(String name);
+    ResultEntity addUserInfo(Map data);
+    ResultEntity updateUserInfo(Map data);
 }

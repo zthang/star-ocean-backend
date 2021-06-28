@@ -26,12 +26,12 @@ public class UserController
         User u=userService.getUserByUserID(userID);
         return new ResultEntity(u!=null?200:-1,null,u);
     }
-    @GetMapping("/api/getUserInfoByPhone")
-    public ResultEntity getUserInfoByPhone(String phone)
-    {
-        User u=userService.getUserByPhone(phone);
-        return new ResultEntity(200,null,u);
-    }
+//    @GetMapping("/api/getUserInfoByPhone")
+//    public ResultEntity getUserInfoByPhone(String phone)
+//    {
+//        User u=userService.getUserByPhone(phone);
+//        return new ResultEntity(200,null,u);
+//    }
     @PostMapping("/login")
     public ResultEntity weChatLogin(@RequestBody Map data)
     {
@@ -39,8 +39,8 @@ public class UserController
 
         return loginService.weChatLogin(data);
     }
-    @PostMapping("/loginByPhone")
-    public ResultEntity loginByPhone(@RequestBody Map data)
+    @PostMapping("/loginByInfo")
+    public ResultEntity loginByInfo(@RequestBody Map data)
     {
         //String phoneNumber=loginService.getPhoneNumber(data);
         return loginService.getToken(data);
@@ -68,5 +68,20 @@ public class UserController
     public ResultEntity getUserAuthInfo(Integer index,Integer size)
     {
         return userService.getUserAuthInfo(index, size);
+    }
+    @GetMapping("api/getUsersByName")
+    public ResultEntity getUsersByName(String name)
+    {
+        return userService.getUsersByName(name);
+    }
+    @PostMapping("api/addUserInfo")
+    public ResultEntity addUserInfo(@RequestBody Map data)
+    {
+        return userService.addUserInfo(data);
+    }
+    @PostMapping("api/updateUserInfo")
+    public ResultEntity updateUserInfo(@RequestBody Map data)
+    {
+        return userService.updateUserInfo(data);
     }
 }
