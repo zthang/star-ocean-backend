@@ -79,4 +79,9 @@ public class ActivityController {
     {
         return activityService.updateGood(data);
     }
+    @PostMapping("/api/checkIfEnrolled")
+    public ResultEntity checkIfEnrolled(@RequestBody Map data)
+    {
+        return activityService.checkIfEnrolled(data);
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -23,7 +24,7 @@ public class UserController
     @GetMapping("/api/getUserInfo")
     public ResultEntity getUserInfo(Integer userID)throws Exception
     {
-        User u=userService.getUserByUserID(userID);
+        HashMap u=userService.getUserByUserID(userID);
         return new ResultEntity(u!=null?200:-1,null,u);
     }
 //    @GetMapping("/api/getUserInfoByPhone")

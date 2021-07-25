@@ -19,4 +19,5 @@ public interface ActivityService {
     ResultEntity updateLocation(Map data);
     ResultEntity updateGood(Map data);
     ResultEntity getActivitiesByUser(Map data);
+    ResultEntity checkIfEnrolled(Map data);
 }

@@ -126,6 +126,7 @@ public class LoginServiceImp implements LoginService
             state=-1;
         else
         {
+            System.out.println(result.get("openid"));
             Map m=loginDao.getSessionByOpenid((String)result.get("openid"));
             if(m==null||m.isEmpty())
             {

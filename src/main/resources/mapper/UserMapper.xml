@@ -38,9 +38,5 @@
         FROM user
         WHERE phone=#{phone}
     </select>
-    <select id="getUserByUserID" resultMap="userInfoMap">
-        SELECT *
-        FROM user
-        WHERE id=#{userID}
-    </select>
+
 </mapper>

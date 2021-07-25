@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service(value = "userService")
@@ -33,7 +34,7 @@ public class UserServiceImp implements UserService
     }
 
     @Override
-    public User getUserByUserID(Integer userID) {
+    public HashMap getUserByUserID(Integer userID) {
         return userDao.getUserByUserID(userID);
     }
 

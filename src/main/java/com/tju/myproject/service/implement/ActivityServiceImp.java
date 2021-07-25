@@ -291,4 +291,14 @@ public class ActivityServiceImp implements ActivityService {
         }
         return new ResultEntity(res==0?200:-1,res==0?"":"更新物品信息失败",null);
     }
+
+    @Override
+    public ResultEntity checkIfEnrolled(Map data)
+    {
+        Map temp=activityDao.getUserActivity((Integer) data.get("activityID"),(Integer)data.get("userID"));
+        if(temp!=null)
+            return new ResultEntity(200,"",1);
+        else
+            return new ResultEntity(200,"",0);
+    }
 }

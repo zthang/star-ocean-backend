@@ -7,6 +7,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Mapper
@@ -15,7 +16,8 @@ public interface UserDao
 {
     int addUser(@Param("user") User user);
     User getUserByPhone(@Param("phone")String phone);
-    User getUserByUserID(@Param("userID")Integer userID);
+    @Select("select * from user where id=#{userID}")
+    HashMap getUserByUserID(@Param("userID")Integer userID);
     @Update("update user set university=#{university}, student_id=#{studentID}, name=#{name}, phone=#{phone}, id_card=#{idCard}, role=#{role} where id=#{id}")
     Integer updateUserInfo(Map data);
     @Options(useGeneratedKeys =true, keyProperty = "id")
