@@ -20,4 +20,6 @@ public interface ActivityService {
     ResultEntity updateGood(Map data);
     ResultEntity getActivitiesByUser(Map data);
     ResultEntity checkIfEnrolled(Map data);
+    ResultEntity getALlSwiperPics();
+    ResultEntity getUserActivitiesInfo(Integer userID);
 }

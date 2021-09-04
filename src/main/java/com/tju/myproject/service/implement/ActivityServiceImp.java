@@ -122,7 +122,7 @@ public class ActivityServiceImp implements ActivityService {
             map.put("selectedClub",handleJson(map.get("selectedClub").toString(),",",3));
             String temp=(String)map.get("scheme");
             temp=temp.substring(1,temp.length()-1);
-            List<Object>schemeList=new ArrayList<>(Arrays.asList(temp.split("@")));
+            List<Object>schemeList=!temp.equals("")?new ArrayList<>(Arrays.asList(temp.split("@"))):new ArrayList<>();
             for(Integer i=0;i<schemeList.size();i++)
             {
                 Map t=new HashMap();
@@ -156,7 +156,7 @@ public class ActivityServiceImp implements ActivityService {
             map.put("selectedGood",handleJson((String)map.get("selectedGood"),",",2));
             temp=map.get("scheme").toString();
             temp=temp.substring(1,temp.length()-1);
-            List<Object>schemeList=new ArrayList<>(Arrays.asList(temp.split("@")));
+            List<Object>schemeList=!temp.equals("")?new ArrayList<>(Arrays.asList(temp.split("@"))):new ArrayList<>();
             for(Integer i=0;i<schemeList.size();i++)
             {
                 Map t=new HashMap();
@@ -227,7 +227,6 @@ public class ActivityServiceImp implements ActivityService {
         resMap.put("allInfo", enrolInfo);
         for(Map m:enrolInfo)
         {
-            m.put("scheme",JSON.parse((String)m.get("scheme")));
             locationMap.compute((Integer) ((HashMap)m.get("location")).get("id"),(k,v)->v==null?new ArrayList<>():v).add(m);
             for(Map good:(ArrayList<Map>)m.get("goods"))
             {
@@ -236,7 +235,11 @@ public class ActivityServiceImp implements ActivityService {
                 mTemp.put("num",good.get("num"));
                 goodsMap.compute((Integer) good.get("good"),(k,v)->v==null?new ArrayList<>():v).add(mTemp);
             }
-            schemeMap.compute((String)((Map)m.get("scheme")).get("text"),(k,v)->v==null?new ArrayList<>():v).add(m);
+            if(m.get("scheme")!=null&&!m.get("scheme").toString().equals("")&&!m.get("scheme").toString().equals("null"))
+            {
+                m.put("scheme",JSON.parse((String)m.get("scheme")));
+                schemeMap.compute((String)((Map)m.get("scheme")).get("text"),(k,v)->v==null?new ArrayList<>():v).add(m);
+            }
         }
         resMap.put("locationInfo",locationMap);
         resMap.put("goodInfo",goodsMap);
@@ -300,5 +303,15 @@ public class ActivityServiceImp implements ActivityService {
             return new ResultEntity(200,"",1);
         else
             return new ResultEntity(200,"",0);
+    }
+
+    @Override
+    public ResultEntity getALlSwiperPics() {
+        return new ResultEntity(200, "", activityDao.getSwiperPics());
+    }
+
+    @Override
+    public ResultEntity getUserActivitiesInfo(Integer userID) {
+        return new ResultEntity(200,"",activityDao.getUserActivitiesInfo(userID));
     }
 }

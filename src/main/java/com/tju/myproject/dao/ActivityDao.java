@@ -75,8 +75,30 @@ public interface ActivityDao
     })
     ArrayList<Map> getActivityUsersInfo(@Param("activityID") Integer activityID);
 
+    @Select("select * from user_activity where userID=#{userID}")
+    @Results(id = "userEnrolsMap", value = {
+            @Result(property = "id", column = "id", javaType = Integer.class, jdbcType = JdbcType.INTEGER, id = true),
+            @Result(property = "userID", column = "userID", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "name", column = "name", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "phone", column = "phone", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "urgentPhone", column = "urgentPhone", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "idCard", column = "idCard", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "location", column = "location", javaType = Map.class, one=@One(select="com.tju.myproject.dao.ActivityDao.getLocationById",fetchType= FetchType.EAGER)),
+            @Result(property = "scheme", column = "scheme", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "remark", column = "remark", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "shouldPay", column = "shouldPay", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "openid", column = "openid", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(column = "{activityID = activityID, userID = userID}", property = "goods",many = @Many(select = "com.tju.myproject.dao.ActivityDao.getActivityUserGoods", fetchType = FetchType.EAGER)),
+            @Result(property = "activityInfo", column = "activityID", javaType = Map.class, one=@One(select="com.tju.myproject.dao.ActivityDao.getActivityInfoById",fetchType= FetchType.EAGER)),
+    })
+    ArrayList<Map> getUserActivitiesInfo(@Param("userID") Integer userID);
+
     @Select("select * from user_activity_good as a left join good as b on a.good=b.id where activityID=#{activityID} and userID=#{userID}")
     ArrayList<Map>getActivityUserGoods(@Param("activityID") Integer activityID, @Param("userID") Integer userID);
+    @Select("select * from activity where id=#{activityID}")
+    Map getActivityInfoById(@Param("activityID") Integer activityID);
+    @Select("select * from swiper")
+    ArrayList<Map>getSwiperPics();
 }
 
 //many = @Many(select = "com.pjb.mapper.UserMapper.getRoleList", fetchType = FetchType.LAZY)

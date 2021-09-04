@@ -27,7 +27,7 @@ public interface UserDao
     Integer addUserClub(Map data);
     @Delete("delete from user_club where id=#{id}")
     Integer deleteUserClub(@Param("id")Integer id);
-    @Select("select * from user where student_id=#{studentID} and university=#{university} and name=#{name}")
+    @Select("select * from user where student_id=#{studentID} and university=#{university}")
     @Results(id = "userInfoMap", value = {
             @Result(property = "id", column = "id", javaType = Integer.class, jdbcType = JdbcType.INTEGER, id = true),
             @Result(property = "university", column = "university", javaType = String.class, jdbcType = JdbcType.VARCHAR),

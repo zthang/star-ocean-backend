@@ -84,4 +84,14 @@ public class ActivityController {
     {
         return activityService.checkIfEnrolled(data);
     }
+    @GetMapping("/api/getAllSwiperPics")
+    public ResultEntity getAllSwiperPics()
+    {
+        return activityService.getALlSwiperPics();
+    }
+    @GetMapping("/api/getUserActivitiesInfo")
+    public ResultEntity getActivityUserInfo(Integer userID)
+    {
+        return activityService.getUserActivitiesInfo(userID);
+    }
 }
