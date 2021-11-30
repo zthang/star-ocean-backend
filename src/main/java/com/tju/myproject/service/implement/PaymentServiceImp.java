@@ -46,15 +46,49 @@ public class PaymentServiceImp implements PaymentService
         return new ResultEntity(200,"",JSONObject.parseObject(str));
     }
     @Override
+    public ResultEntity getVipPaymentAddress(Map map)
+    {
+        Map m=new HashMap(map);
+        m.remove("userID");
+        String key = "d491e071235b6e1c4873e31794abfd04";
+        SignUtil.sign s = new SignUtil.sign();
+        String sign = s.sign(m,key);
+        m.put("sign", sign);
+
+        String url = "https://service-3ekf6607-1252021128.sh.apigw.tencentcs.com/api/miniapp";
+        String str = JavaPostJson.post(url,new JSONObject(m).toString());
+
+        paymentDao.addUserVipPayment(map);
+
+        return new ResultEntity(200,"",JSONObject.parseObject(str));
+    }
+    @Override
     public void updatePayment(Map m)
     {
         paymentDao.updatePayment(m);
     }
 
     @Override
+    public void updateVipPayment(Map m) {
+        paymentDao.updateVipPayment(m);
+    }
+
+    @Override
     public ResultEntity checkPayment(Map m)
     {
         ArrayList<Map> orders=paymentDao.getTradeNumber(m);
+        for(Map order:orders)
+        {
+            if(order.containsKey("in_trade_no")&&order.get("in_trade_no").toString().length()>0)
+                return new ResultEntity(200,"",order);
+        }
+        return new ResultEntity(200,"",orders.size()>0?orders.get(0):new HashMap<>());
+    }
+
+    @Override
+    public ResultEntity checkVipPayment(Integer userID)
+    {
+        ArrayList<Map> orders=paymentDao.getVipTradeNumber(userID);
         for(Map order:orders)
         {
             if(order.containsKey("in_trade_no")&&order.get("in_trade_no").toString().length()>0)

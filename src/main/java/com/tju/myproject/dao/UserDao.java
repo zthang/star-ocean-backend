@@ -17,6 +17,7 @@ public interface UserDao
     int addUser(@Param("user") User user);
     User getUserByPhone(@Param("phone")String phone);
     @Select("select * from user where id=#{userID}")
+    @ResultMap("userInfoMap")
     HashMap getUserByUserID(@Param("userID")Integer userID);
     @Update("update user set university=#{university}, student_id=#{studentID}, name=#{name}, phone=#{phone}, id_card=#{idCard}, role=#{role} where id=#{id}")
     Integer updateUserInfo(Map data);
@@ -27,7 +28,9 @@ public interface UserDao
     Integer addUserClub(Map data);
     @Delete("delete from user_club where id=#{id}")
     Integer deleteUserClub(@Param("id")Integer id);
-    @Select("select * from user where student_id=#{studentID} and university=#{university}")
+    @Delete("delete from user_club where userID=#{userID} and clubID=#{clubID}")
+    Integer deleteUserClubByInfo(@Param("userID")Integer userID, @Param("clubID")Integer clubID);
+    @Select("select * from user where student_id=#{studentID} and university=#{university} and name=#{name}")
     @Results(id = "userInfoMap", value = {
             @Result(property = "id", column = "id", javaType = Integer.class, jdbcType = JdbcType.INTEGER, id = true),
             @Result(property = "university", column = "university", javaType = String.class, jdbcType = JdbcType.VARCHAR),
@@ -46,15 +49,33 @@ public interface UserDao
     Map getUserByInfo(Map data);
     @Select("select * from user_club as a left join club as b on a.clubID=b.id where userID=#{userID}")
     ArrayList<Map>getUserClubs(@Param("userID")Integer userID);
-    @Select("select * from user_auth where isPass=-1 limit #{index},#{size}")
-    ArrayList<Map> getUserAuthInfo(@Param("index")Integer index, @Param("size")Integer size);
+    @Select("select * from user_auth where isPass=-1")
+    @Results(id = "authInfoMap", value = {
+            @Result(property = "id", column = "id", javaType = Integer.class, jdbcType = JdbcType.INTEGER, id = true),
+            @Result(property = "userID", column = "userID", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "name", column = "name", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "university", column = "university", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "images", column = "images", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "isPass", column = "isPass", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "adminID", column = "adminID", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "remark", column = "remark", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(property = "openid", column = "openid", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(column = "userID", property = "club",many = @Many(select = "com.tju.myproject.dao.UserDao.getUserClubs", fetchType = FetchType.EAGER))
+    })
+    ArrayList<Map> getUserAuthInfo();
     @Insert("insert into user_auth (userID, name, university, images, isPass, adminID, openid) VALUES (#{userID}, #{name}, #{university}, #{images}, -1, -1, #{openid})")
     Integer addUserAuth(Map data);
     @Update("update user_auth SET isPass = #{isPass}, adminID = #{adminID}, remark = #{remark} WHERE (id = #{authID})")
     Integer updateAuth(Map data);
     @Update("update user SET isAuth = #{isAuth} WHERE (id = #{userID})")
     Integer updateUserAuth(@Param("isAuth") Integer isAuth, @Param("userID") Integer userID);
-    @Select("select * from user where name=#{name}")
+    @Select("select * from user where name like CONCAT('%',#{name},'%')")
     @ResultMap("userInfoMap")
     ArrayList<Map>getUsersByName(@Param("name") String name);
+    @Update("update user set role=1 where id=#{userID}")
+    Integer makeUserVip(@Param("userID") Integer userID);
+    @Update("update user set id_card=#{idCard} where id=#{userID}")
+    Integer updateIdCard(@Param("idCard")String idCard, Integer userID);
+    @Update("update user set phone=#{phone} where id=#{userID}")
+    Integer updatePhone(@Param("phone")String phone, Integer userID);
 }

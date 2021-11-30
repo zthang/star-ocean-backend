@@ -94,6 +94,8 @@ wx.appId: wx1bdbda9945782439
 wx.appSecret : 4dd7895f9ac3b7bc45121e6313c6a17a
 
 file-save-path : /home/ubuntu/wechatProject/tempImg/
+excel-export-path : /home/ubuntu/wechatProject/excel/
+#/home/ubuntu/wechatProject/excel/
 #file-save-path : /Users/zhangtianhang/WechatProjects/tempImg/
 
 default-img : https://xzxjlljh.xyz:8787/images/2021/06/13/3c45c4889fb24901a1a424c09838f56b.jpg

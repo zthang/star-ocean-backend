@@ -13,6 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Value("${file-save-path}")
     private String fileSavePath;
+    @Value("${excel-export-path}")
+    private String excelSavePath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -24,5 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
          */
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:"+fileSavePath);
+        registry.addResourceHandler("/excel/**")
+                .addResourceLocations("file:"+excelSavePath);
     }
 }

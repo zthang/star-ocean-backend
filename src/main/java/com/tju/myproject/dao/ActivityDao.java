@@ -18,6 +18,18 @@ public interface ActivityDao
     ArrayList<Map> getGood();
     @Select("select * from university")
     ArrayList<Map> getUniversity();
+    @Select("select * from area")
+    ArrayList<Map> getArea();
+    @Select("select * from area_university")
+    @Results(id = "areaMap", value = {
+            @Result(property = "areaID", column = "area_id", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "universityID", column = "university_id", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
+            @Result(property = "area", column = "area_id", javaType = Map.class, one=@One(select="com.tju.myproject.dao.ActivityDao.getAreaById",fetchType= FetchType.EAGER)),
+            @Result(column = "university_id", property = "university", javaType = Map.class ,one = @One(select = "com.tju.myproject.dao.ActivityDao.getUniversityById", fetchType = FetchType.EAGER))
+    })
+    ArrayList<Map> getUniversityArea();
+    @Select("select * from area where id=#{id}")
+    Map getAreaById(@Param("id")Integer id);
     @Select("select * from club")
     ArrayList<Map> getClub();
     @Update("update location set name=#{name} where id=#{id}")
@@ -32,12 +44,30 @@ public interface ActivityDao
     Integer deleteGood(@Param("id") Integer id);
     @Insert("insert into good (name, price) VALUES (#{name}, #{price})")
     Integer addGood(Map data);
-    @Insert("insert into activity (activityName, activityDate, activityDDL, activityLocation, activityPrice, selectedLocation, selectedGood, selectedClub, scheme, delta, showImg, plainText) VALUES (#{activityName},#{activityDate},#{activityDDL},#{activityLocation},#{activityPrice},#{selectedLocation},#{selectedGood},#{selectedClub},#{scheme},#{delta},#{showImg},#{plainText})")
+    @Update("update university set name=#{name} where id=#{id}")
+    Integer updateUniversity(Map data);
+    @Delete("delete from university where id=#{id}")
+    Integer deleteUniversity(@Param("id") Integer id);
+    @Options(useGeneratedKeys =true, keyProperty = "id")
+    @Insert("insert into university (name) VALUES (#{name})")
+    Integer addUniversity(Map data);
+    @Insert("insert into area_university(area_id, university_id) VALUES (#{areaID}, #{universityID})")
+    Integer addAreaUniversity(@Param("areaID")Integer areaID, @Param("universityID")Integer universityID);
+    @Insert("delete from area_university where id>0 and university_id = #{universityID}")
+    Integer deleteAreaUniversity(@Param("universityID")Integer universityID);
+    @Update("update club set name=#{name} where id=#{id}")
+    Integer updateClub(Map data);
+    @Delete("delete from club where id=#{id}")
+    Integer deleteClub(@Param("id") Integer id);
+    @Insert("insert into club (name) VALUES (#{name})")
+    @Options(useGeneratedKeys = true,keyProperty = "new_id")
+    Integer addClub(Map data);
+    @Insert("insert into activity (adminID, activityName, activityDate, activityDDL, activityLocation, activityPrice, activityPriceVip, selectedLocation, selectedGood, selectedClub, scheme, delta, showImg, plainText, isIdNes, contact, limitNum) VALUES (#{adminID}, #{activityName},#{activityDate},#{activityDDL},#{activityLocation},#{activityPrice},#{activityPriceVip},#{selectedLocation},#{selectedGood},#{selectedClub},#{scheme},#{delta},#{showImg},#{plainText},#{isIdNes},#{contact}, #{limitNum})")
     Integer addActivity(Map m);
-    @Update("update activity set activityName=#{activityName}, activityDate=#{activityDate}, activityDDL=#{activityDDL}, activityLocation=#{activityLocation}, activityPrice=#{activityPrice}, selectedLocation=#{selectedLocation}, selectedGood=#{selectedGood}, selectedClub=#{selectedClub}, scheme=#{scheme}, delta=#{delta}, showImg=#{showImg}, plainText=#{plainText} where id=#{activityID}")
+    @Update("update activity set activityName=#{activityName}, activityDate=#{activityDate}, activityDDL=#{activityDDL}, activityLocation=#{activityLocation}, activityPrice=#{activityPrice}, activityPriceVip=#{activityPriceVip}, selectedLocation=#{selectedLocation}, selectedGood=#{selectedGood}, selectedClub=#{selectedClub}, scheme=#{scheme}, delta=#{delta}, showImg=#{showImg}, plainText=#{plainText}, isIdNes=#{isIdNes}, contact=#{contact}, limitNum=#{limitNum} where id=#{activityID}")
     Integer updateActivity(Map m);
-    @Select("select * from activity order by id desc limit #{index},#{size}")
-    ArrayList<Map> getActivities(@Param("index")Integer index, @Param("size")Integer size);
+    @Select("select * from activity where isDeleted=0 order by id desc")
+    ArrayList<Map> getActivities();
     @Select("select * from activity order by id desc")
     ArrayList<Map> getAllActivities();
     @Select("select * from location where id=#{id}")
@@ -46,9 +76,9 @@ public interface ActivityDao
     Map getGoodById(@Param("id")Integer id);
     @Select("select * from university where id=#{id}")
     Map getUniversityById(@Param("id")Integer id);
-    @Insert("insert into user_activity(activityID, userID, name, phone, urgentPhone, idCard, location, scheme, remark, shouldPay,openid) VALUES (#{activityID}, #{userID}, #{name}, #{phone}, #{urgentPhone}, #{idCard}, #{location}, #{scheme}, #{remark}, #{shouldPay},#{openid})")
+    @Insert("insert into user_activity(activityID, userID, name, phone, urgentPhone, idCard, location, scheme, remark, shouldPay,openid, friend) VALUES (#{activityID}, #{userID}, #{name}, #{phone}, #{urgentPhone}, #{idCard}, #{location}, #{scheme}, #{remark}, #{shouldPay},#{openid}, #{friend})")
     Integer activityEnrol(Map data);
-    @Update("update user_activity set userID=#{userID}, name=#{name}, phone=#{phone}, urgentPhone=#{urgentPhone},idCard=#{idCard},location=#{location}, scheme=#{scheme}, remark=#{remark}, shouldPay=#{shouldPay},openid=#{openid} where id=#{enrolID}")
+    @Update("update user_activity set userID=#{userID}, name=#{name}, phone=#{phone}, urgentPhone=#{urgentPhone},idCard=#{idCard},location=#{location}, scheme=#{scheme}, remark=#{remark}, shouldPay=#{shouldPay},openid=#{openid}, friend=#{friend} where id=#{enrolID}")
     Integer updateActivityEnrol(Map data);
     @Insert("insert into user_activity_good (activityID, userID, good, num) VALUES (#{activityID}, #{userID}, #{good}, #{num})")
     Integer addUserNeedGood(Map data);
@@ -71,7 +101,9 @@ public interface ActivityDao
             @Result(property = "remark", column = "remark", javaType = String.class, jdbcType = JdbcType.VARCHAR),
             @Result(property = "shouldPay", column = "shouldPay", javaType = Integer.class, jdbcType = JdbcType.INTEGER),
             @Result(property = "openid", column = "openid", javaType = String.class, jdbcType = JdbcType.VARCHAR),
-            @Result(column = "{activityID = activityID, userID = userID}", property = "goods",many = @Many(select = "com.tju.myproject.dao.ActivityDao.getActivityUserGoods", fetchType = FetchType.EAGER))
+            @Result(property = "friend", column = "friend", javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(column = "{activityID = activityID, userID = userID}", property = "goods",many = @Many(select = "com.tju.myproject.dao.ActivityDao.getActivityUserGoods", fetchType = FetchType.EAGER)),
+            @Result(column = "userID", property = "club",many = @Many(select = "com.tju.myproject.dao.UserDao.getUserClubs", fetchType = FetchType.EAGER))
     })
     ArrayList<Map> getActivityUsersInfo(@Param("activityID") Integer activityID);
 
@@ -99,6 +131,10 @@ public interface ActivityDao
     Map getActivityInfoById(@Param("activityID") Integer activityID);
     @Select("select * from swiper")
     ArrayList<Map>getSwiperPics();
+    @Update("update activity set isDeleted=#{isDeleted}, delAdminID=#{adminID} where id=#{activityID}")
+    Integer deleteActivity(@Param("activityID")Integer activityID,@Param("adminID")Integer adminID,@Param("isDeleted")Integer isDeleted);
+    @Select("select count(*) from user_activity where activityID=#{activityID}")
+    Integer countEnrollNum(@Param("activityID") Integer activityID);
 }
 
 //many = @Many(select = "com.pjb.mapper.UserMapper.getRoleList", fetchType = FetchType.LAZY)

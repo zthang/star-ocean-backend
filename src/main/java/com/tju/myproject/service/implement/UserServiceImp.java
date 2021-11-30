@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service(value = "userService")
 public class UserServiceImp implements UserService
@@ -39,10 +41,21 @@ public class UserServiceImp implements UserService
     }
 
     @Override
-    public ResultEntity getUserAuthInfo(Integer index, Integer size)
+    public ResultEntity getUserAuthInfo(Integer index, Integer size, ArrayList<Map>club)
     {
-        ArrayList<Map> m=userDao.getUserAuthInfo(index*size,size);
-        return new ResultEntity(m!=null?200:-1,m!=null?"":"查询出错，请重试！",m);
+        ArrayList<Map>resList=new ArrayList<>();
+        ArrayList<Map> m=userDao.getUserAuthInfo();
+        List<Integer> adminClubIDs=club.stream().map(item->(Integer)(item.get("clubID"))).collect(Collectors.toList());
+        for(Map authInfo:m)
+        {
+            List<Integer> authClubIDs=((ArrayList<Map>)authInfo.get("club")).stream().map(item->(Integer)item.get("clubID")).collect(Collectors.toList());
+            List<Integer> collect = adminClubIDs.stream().filter(num -> authClubIDs.contains(num)).collect(Collectors.toList());
+            if(collect.size()!=0)
+                resList.add(authInfo);
+        }
+        Integer to=Math.min(size*(index+1),resList.size());
+        Integer from=Math.min(index*size, to);
+        return new ResultEntity(m!=null?200:-1,m!=null?"":"查询出错，请重试！",resList.subList(from,to));
     }
 
     @Override
@@ -76,7 +89,12 @@ public class UserServiceImp implements UserService
     @Override
     public ResultEntity getUsersByName(String name)
     {
-        return new ResultEntity(200,"",userDao.getUsersByName(name));
+        ArrayList<Map>users=userDao.getUsersByName(name);
+        for(Integer i=users.size()-1;i>=0;i--)
+        {
+            users.removeIf(item->Integer.parseInt(item.get("role").toString())>1);
+        }
+        return new ResultEntity(200,"",users);
     }
 
     @Override
@@ -139,5 +157,11 @@ public class UserServiceImp implements UserService
             }
         }
         return new ResultEntity(res==0?200:-1,res==0?"":"更新用户信息失败!",null);
+    }
+
+    @Override
+    public ResultEntity makeUserVip(Integer userID) {
+        Integer success=userDao.makeUserVip(userID);
+        return new ResultEntity(success==1?200:-1,success==1?"成功":"更新用户身份失败",null);
     }
 }

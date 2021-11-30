@@ -45,9 +45,9 @@ public class ActivityController {
         return activityService.updateAcivity(data);
     }
     @GetMapping("/api/getActivity")
-    public ResultEntity getActivity(Integer index,Integer size)
+    public ResultEntity getActivity(Integer index,Integer size, Integer adminID, Integer role)
     {
-        return activityService.getActivities(index,size);
+        return activityService.getActivities(index,size,adminID,role);
     }
     @PostMapping("/api/getActivityByUser")
     public ResultEntity getActivityByUser(@RequestBody Map data)
@@ -65,9 +65,14 @@ public class ActivityController {
         return activityService.updateActivityEnrol(data);
     }
     @GetMapping("/api/getActivityUsersInfo")
-    public ResultEntity getActivityUsersInfo(Integer activityID)
+    public ResultEntity getActivityUsersInfo(Integer activityID, Integer index, Integer size, Integer mode, String key)
     {
-        return activityService.getActivityUsersInfo(activityID);
+        return activityService.getActivityUsersInfo(activityID, index, size, mode, key);
+    }
+    @GetMapping("/api/exportExcel")
+    public ResultEntity exportExcel(Integer activityID)
+    {
+        return activityService.exportExcel(activityID);
     }
     @PostMapping("/api/updateLocation")
     public ResultEntity updateLocation(@RequestBody Map data)
@@ -78,6 +83,16 @@ public class ActivityController {
     public ResultEntity updateGood(@RequestBody Map data)
     {
         return activityService.updateGood(data);
+    }
+    @PostMapping("/api/updateUniversity")
+    public ResultEntity updateUniversity(@RequestBody Map data)
+    {
+        return activityService.updateUniversity(data);
+    }
+    @PostMapping("/api/updateClub")
+    public ResultEntity updateClub(@RequestBody Map data)
+    {
+        return activityService.updateClub(data);
     }
     @PostMapping("/api/checkIfEnrolled")
     public ResultEntity checkIfEnrolled(@RequestBody Map data)
@@ -93,5 +108,25 @@ public class ActivityController {
     public ResultEntity getActivityUserInfo(Integer userID)
     {
         return activityService.getUserActivitiesInfo(userID);
+    }
+    @GetMapping("/api/deleteActivity")
+    public ResultEntity deleteActivity(Integer activityID, Integer adminID, Integer isDeleted)
+    {
+        return activityService.deleteActivity(activityID, adminID, isDeleted);
+    }
+    @GetMapping("/api/countEnrollNum")
+    public ResultEntity countEnrollNum(Integer activityID)
+    {
+        return activityService.countEnrollNum(activityID);
+    }
+    @GetMapping("/getUniversityArea")
+    public ResultEntity getUniversityArea()
+    {
+        return activityService.getUniversityArea();
+    }
+    @GetMapping("/api/getArea")
+    public ResultEntity getArea()
+    {
+        return activityService.getArea();
     }
 }

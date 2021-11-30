@@ -19,15 +19,31 @@ public class PaymentController {
     {
         return paymentService.getPaymentAddress(m);
     }
+    @PostMapping("/api/getVipPaymentAddress")
+    public ResultEntity getVipPaymentAddress(@RequestBody Map m)
+    {
+        return paymentService.getVipPaymentAddress(m);
+    }
     @PostMapping("/payment")
     public String payment(@RequestBody Map m)
     {
         paymentService.updatePayment(m);
         return "success";
     }
+    @PostMapping("/vipPayment")
+    public String vipPayment(@RequestBody Map m)
+    {
+        paymentService.updateVipPayment(m);
+        return "success";
+    }
     @PostMapping("/api/checkPayment")
     public ResultEntity checkPayment(@RequestBody Map m)
     {
         return paymentService.checkPayment(m);
+    }
+    @GetMapping("/api/checkVipPayment")
+    public ResultEntity checkVipPayment(Integer userID)
+    {
+        return paymentService.checkVipPayment(userID);
     }
 }
